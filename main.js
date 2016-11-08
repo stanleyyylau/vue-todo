@@ -47,10 +47,19 @@ var data = {
 Vue.component('todoitem', {
   props: ['todo'],
   template: "#todoitem-template",
+  data: function(){
+    return {
+      showdetail: false
+    }
+  },
   methods: {
     deletetodo: function(){
       var text = this.todo.text
       this.$emit('deletetodo', text)
+    },
+    toggle: function(){
+      var text = this.todo.text
+      this.$emit('toggle', text)
     }
   }
 });
@@ -117,6 +126,14 @@ new Vue({
       }
       console.log(newtodo);
       this.todos.push(newtodo)
+    },
+    toggle: function(text){
+      console.log(text);
+      for(var i = 0; i < this.todos.length; i++){
+        if(this.todos[i].text == text){
+          this.todos[i].completed = !this.todos[i].completed;
+        }
+      }
     }
   }
 })

@@ -5,23 +5,25 @@
   <meta charset="utf-8">
   <title>Vue todo list</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bootstrap.min.css">
   <link rel="stylesheet" href="main.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.js"></script>
+  <script src="vue.js"></script>
 </head>
 
 <body>
-
 <!-- Individual todo item template   -->
 <template id="todoitem-template">
-  <li class="list-group-item">
+  <li @click="showdetail = !showdetail" class="list-group-item">
     <template v-if="todo.completed">
-      <span style="font-;text-decoration: line-through;">{{ todo.text }} Done!!!</span>
+      <span style="font-;text-decoration: line-through;">{{ todo.text }}</span>
     </template>
     <template v-else>
       {{ todo.text }}
     </template>
-    <button type="button" class="btn btn-danger" @click="deletetodo">DELETE</button>
+    <div class="detail-btns" v-show="showdetail">
+      <button type="button" class="btn btn-sm btn-success" @click="toggle">Toggle</button>
+      <button type="button" class="btn btn-sm btn-danger" @click="deletetodo">DELETE</button>
+    </div>
   </li>
 </template>
 
@@ -46,7 +48,7 @@
     </div>
     <addtodo v-show="addingnewtodo" @addnew="addnew"></addtodo>
     <ul class="list-group">
-      <todoitem v-for="todo in queryTodos" v-bind:todo="todo" @deletetodo='deletetodo'>
+      <todoitem v-for="todo in queryTodos" v-bind:todo="todo" @deletetodo="deletetodo" @toggle="toggle">
       </todoitem>
     </ul>
   </div>
