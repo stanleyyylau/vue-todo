@@ -49,7 +49,8 @@ Vue.component('todoitem', {
   template: "#todoitem-template",
   data: function(){
     return {
-      showdetail: false
+      showdetail: false,
+      updating: false
     }
   },
   methods: {
@@ -60,6 +61,10 @@ Vue.component('todoitem', {
     toggle: function(){
       var text = this.todo.text
       this.$emit('toggle', text)
+    },
+    edit: function(){
+      this.updating = !this.updating
+      this.$emit('edit')
     }
   }
 });
@@ -134,6 +139,9 @@ new Vue({
           this.todos[i].completed = !this.todos[i].completed;
         }
       }
+    },
+    edit: function(){
+
     }
   }
 })

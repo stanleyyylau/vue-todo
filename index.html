@@ -13,17 +13,27 @@
 <body>
 <!-- Individual todo item template   -->
 <template id="todoitem-template">
-  <li @click="showdetail = !showdetail" class="list-group-item">
+  <li class="list-group-item">
     <template v-if="todo.completed">
-      <span style="font-;text-decoration: line-through;">{{ todo.text }}</span>
+      <span @click="showdetail = !showdetail" style="color: #9E9E9E;text-decoration: line-through;">{{ todo.text }}</span>
     </template>
     <template v-else>
-      {{ todo.text }}
+      <span @click="showdetail = !showdetail">{{ todo.text }}</span>
     </template>
     <div class="detail-btns" v-show="showdetail">
       <button type="button" class="btn btn-sm btn-success" @click="toggle">Toggle</button>
+      <button type="button" class="btn btn-sm btn-primary" @click="edit">Edit</button>
       <button type="button" class="btn btn-sm btn-danger" @click="deletetodo">DELETE</button>
     </div>
+    <template v-if="updating">
+      <form>
+        <div class="form-group">
+          <label for="updating">Enter your new todo name</label>
+          <input type="email" class="form-control" id="updating">
+          <buttun type="button" class="btn btn-primary confirm-add">confirm</buttun>
+        </div>
+      </form>
+    </template>
   </li>
 </template>
 
