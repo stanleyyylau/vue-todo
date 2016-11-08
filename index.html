@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Vue todo list</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="main.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.js"></script>
+</head>
+
+<body>
+
+<!-- Individual todo item template   -->
+<template id="todoitem-template">
+  <li class="list-group-item">
+    <template v-if="todo.completed">
+      <span style="font-;text-decoration: line-through;">{{ todo.text }} Done!!!</span>
+    </template>
+    <template v-else>
+      {{ todo.text }}
+    </template>
+    <button type="button" class="btn btn-danger" @click="deletetodo">DELETE</button>
+  </li>
+</template>
+
+<!-- Add new todo item template, the popup -->
+<template id="addtodo-template">
+  <form>
+    <div class="form-group text-center">
+      <label for="newToDo">Enter new todo</label>
+      <input v-model="newtodotext" type="text" class="form-control" id="newToDo" placeholder="Enter your todo">
+      <buttun type="button" class="btn btn-primary confirm-add" @click="addnew">confirm</buttun>
+    </div>
+  </form>
+</template>
+
+
+<!-- The actual app -->
+<div id="app">
+  <!-- Container for todo items -->
+  <div class="container">
+    <div class="row text-center add-new-container">
+      <button type="button" class="btn btn-primary" @click="showaddnew">add new</button>
+    </div>
+    <addtodo v-show="addingnewtodo" @addnew="addnew"></addtodo>
+    <ul class="list-group">
+      <todoitem v-for="todo in queryTodos" v-bind:todo="todo" @deletetodo='deletetodo'>
+      </todoitem>
+    </ul>
+  </div>
+
+  <!-- Nav bar, it will have router function in future -->
+  <div class="nav-bar-wrapper">
+    <div class="nav-bar">
+      <a @click="query='all'">All Todos</a>
+      <a @click="query='completed'">Completed</a>
+      <a @click="query='Notcompleted'">Not Completed</a>
+    </div>
+  </div>
+</div>
+
+
+<script src="main.js"></script>
+</body>
+
+</html>
