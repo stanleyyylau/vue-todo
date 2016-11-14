@@ -3,14 +3,14 @@
 //   headers: {'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M'}
 // };
 
-Vue.http.headers.common['x-auth'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M';
+// Vue.http.headers.common['x-auth'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODI5NGViMzVmMmQ3YTY2YmY1ZGZkNmIiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc5MTAyMTMxfQ.RAABJJ1pr509ME-GQ6YGEDlQF0XULEJzrnojJ_GyLQ8';
 
-// var instance = axios.create({
-//   baseURL: 'https://st-todo-api.herokuapp.com/todos',
-//   headers: {
-//           'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M'
-//             }
-// });
+var instance = axios.create({
+  baseURL: 'https://st-todo-api.herokuapp.com',
+  headers: {
+          'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M'
+            }
+});
 
 
 
@@ -18,39 +18,7 @@ var data = {
   "todos": [
     {
       "_id": "581ee7feacea2000100c4651",
-      "text": "What am I gonna do1?",
-      "_creator": "581ee75bacea2000100c464f",
-      "__v": 0,
-      "completedAt": null,
-      "completed": true
-    },
-    {
-      "_id": "58213287a28c2e0010ec80e0",
-      "text": "What am I gonna do?",
-      "_creator": "581ee75bacea2000100c464f",
-      "__v": 0,
-      "completedAt": null,
-      "completed": false
-    },
-    {
-      "_id": "5821329da28c2e0010ec80e1",
-      "text": "this is another fsample to do",
-      "_creator": "581ee75bacea2000100c464f",
-      "__v": 0,
-      "completedAt": null,
-      "completed": true
-    },
-    {
-      "_id": "582132a9a28c2e0010ec80e2",
-      "text": "I got somethinffg else to do",
-      "_creator": "581ee75bacea2000100c464f",
-      "__v": 0,
-      "completedAt": null,
-      "completed": false
-    },
-    {
-      "_id": "582132b7a28c2e0010ec80e3",
-      "text": "my todo list is fucking awesome",
+      "text": "Loading todo items...",
       "_creator": "581ee75bacea2000100c464f",
       "__v": 0,
       "completedAt": null,
@@ -78,8 +46,11 @@ Vue.component('todoitem', {
       this.$emit('toggle', text)
     },
     edit: function(){
-      this.updating = !this.updating
+      // this.updating = !this.updating
       this.$emit('edit')
+    },
+    confirmEdit: function(){
+
     }
   }
 });
@@ -102,7 +73,7 @@ Vue.component('addtodo', {
 })
 
 
-new Vue({
+var app = new Vue({
   el: '#app',
   data: {
     todos: data.todos,
@@ -130,8 +101,31 @@ new Vue({
   methods: {
     deletetodo: function(text){
       console.log('you want to delete????')
-      this.todos = this.todos.filter(function(elem, index){
-        return elem.text != text;
+      // find todo ID according to text
+      var idToDelete;
+      this.todos.forEach(function(elem, index){
+        if(elem.text === text){
+          idToDelete = elem._id;
+          return false;
+        }
+      })
+
+      // Todo delete that item from DB
+      instance.delete('/todos/' + idToDelete)
+      .then(function(response){
+        console.log(response);
+        console.log('above is what you get by deleting the todo')
+        if(response.status === 200){
+          // safely delete todo from app state now
+          // Todo delete that item from app state
+          // debugger
+          app.$root.todos = app.$root.todos.filter(function(elem, index){
+            return elem.text != text;
+          })
+        }
+      })
+      .catch(function(error){
+        console.log(error)
       })
     },
     showaddnew: function(){
@@ -140,38 +134,66 @@ new Vue({
     addnew: function(newtodotext){
       console.log('you want to add new?')
       this.addingnewtodo = !this.addingnewtodo;
-      var newtodo = {
-        text: newtodotext,
-        completed: false
-      }
-      console.log(newtodo);
-      this.todos.push(newtodo)
+      // make ajax request to actually create a todo in the DB
+      instance.post('/todos', {
+        text: newtodotext
+        })
+        .then(function (response) {
+          if(response.status == 200){
+            // debugger
+            app.$root.todos.push(response.data)
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     toggle: function(text){
       console.log(text);
-      for(var i = 0; i < this.todos.length; i++){
-        if(this.todos[i].text == text){
-          this.todos[i].completed = !this.todos[i].completed;
+      // find todo ID according to text
+      var idToToggle;
+      var targetElem;
+      this.todos.forEach(function(elem, index){
+        if(elem.text === text){
+          targetElem = elem;
+          idToToggle = elem._id;
+          return false;
         }
-      }
+      })
+
+      // Todo delete that item from DB
+      instance.patch('/todos/' + idToToggle ,{
+        text: text,
+        completed: !targetElem.completed
+      })
+      .then(function(response){
+        console.log(response);
+        console.log('above is what you get by toggle the todo')
+        if(response.status === 200){
+          // safely toggle todo from app state now
+          for(var i = 0; i < app.$root.todos.length; i++){
+            if(app.$root.todos[i].text == text){
+              app.$root.todos[i].completed = !app.$root.todos[i].completed;
+            }
+          }
+        }
+      })
+      .catch(function(error){
+        console.log(error)
+      })
     },
     edit: function(){
-
+      alert('This function will be avariable soon!')
     }
   },
   mounted: function(){
-    // instance.get('')
-    //   .then(function (response) {
-    //     console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
-
-    this.$http.post('https://st-todo-api.herokuapp.com/todos').then((response) => {
-        console.log(response)
-      }, (response) => {
-        // error callback
+    instance.get('/todos')
+      .then(function (response) {
+        console.log(response.data);
+        app.$root.todos = response.data.todos;
+      })
+      .catch(function (error) {
+        console.log(error);
       });
   }
 })

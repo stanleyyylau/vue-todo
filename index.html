@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="bootstrap.min.css">
   <link rel="stylesheet" href="main.css">
   <script src="vue.js"></script>
-  <script src="vue_resource.js"></script>
 </head>
 
 <body>
@@ -31,7 +30,7 @@
         <div class="form-group">
           <label for="updating">Enter your new todo name</label>
           <input type="email" class="form-control" id="updating">
-          <buttun type="button" class="btn btn-primary confirm-add">confirm</buttun>
+          <button type="button" @click='confirmEdit' class="btn btn-primary confirm-add">confirm</button>
         </div>
       </form>
     </template>
@@ -44,7 +43,7 @@
     <div class="form-group text-center">
       <label for="newToDo">Enter new todo</label>
       <input v-model="newtodotext" type="text" class="form-control" id="newToDo" placeholder="Enter your todo">
-      <buttun type="button" class="btn btn-primary confirm-add" @click="addnew">confirm</buttun>
+      <button type="button" class="btn btn-primary confirm-add" @click="addnew">confirm</button>
     </div>
   </form>
 </template>
@@ -59,7 +58,7 @@
     </div>
     <addtodo v-show="addingnewtodo" @addnew="addnew"></addtodo>
     <ul class="list-group">
-      <todoitem v-for="todo in queryTodos" v-bind:todo="todo" @deletetodo="deletetodo" @toggle="toggle">
+      <todoitem v-for="todo in queryTodos" v-bind:todo="todo" @edit="edit" @deletetodo="deletetodo" @toggle="toggle">
       </todoitem>
     </ul>
   </div>
