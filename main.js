@@ -1,3 +1,18 @@
+//
+// var config = {
+//   headers: {'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M'}
+// };
+
+Vue.http.headers.common['x-auth'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M';
+
+// var instance = axios.create({
+//   baseURL: 'https://st-todo-api.herokuapp.com/todos',
+//   headers: {
+//           'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M'
+//             }
+// });
+
+
 
 var data = {
   "todos": [
@@ -143,5 +158,20 @@ new Vue({
     edit: function(){
 
     }
+  },
+  mounted: function(){
+    // instance.get('')
+    //   .then(function (response) {
+    //     console.log(response);
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
+
+    this.$http.post('https://st-todo-api.herokuapp.com/todos').then((response) => {
+        console.log(response)
+      }, (response) => {
+        // error callback
+      });
   }
 })
