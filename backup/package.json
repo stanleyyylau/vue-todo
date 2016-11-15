@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "axios": "^0.15.2",
+    "browser-sync": "^2.17.6",
+    "vue-resource": "^1.0.3"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.17.5",
+    "gulp": "^3.9.1"
+  }
+}
