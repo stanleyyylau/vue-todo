@@ -18,6 +18,13 @@ instance.interceptors.request.use(function (config) {
   return config;
 });
 
+
+var myInterceptor = instance.interceptors.request.use(function (config) {
+  console.log('this is my second interceptor..........')
+  return config;
+});
+
+
 instance.interceptors.response.use(function (response) {
     console.log('I intercept the response!!!!')
     help.showLoading = false;
