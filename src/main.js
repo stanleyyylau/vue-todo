@@ -1,10 +1,13 @@
-//
-// var config = {
-//   headers: {'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M'}
-// };
+import Vue from 'vue'
+// import App from './App.vue'
 
-// Vue.http.headers.common['x-auth'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODI5NGViMzVmMmQ3YTY2YmY1ZGZkNmIiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc5MTAyMTMxfQ.RAABJJ1pr509ME-GQ6YGEDlQF0XULEJzrnojJ_GyLQ8';
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M
+
+import addtodo from './components/AddToDo.vue'
+import help from './components/help.vue'
+import todoitem from './components/TodoItem.vue'
+
+import axios from 'axios';
+
 var instance = axios.create({
   baseURL: 'https://st-todo-api.herokuapp.com',
   headers: {
@@ -14,13 +17,20 @@ var instance = axios.create({
 
 instance.interceptors.request.use(function (config) {
   console.log('I intercept your request!!!!!!!!! right BEFORE you send it....');
-  help.showLoading = true;
+  app.showLoading = true;
   return config;
 });
 
+
+var myInterceptor = instance.interceptors.request.use(function (config) {
+  console.log('this is my second interceptor..........')
+  return config;
+});
+
+
 instance.interceptors.response.use(function (response) {
     console.log('I intercept the response!!!!')
-    help.showLoading = false;
+    app.showLoading = false;
     return response;
   }, function (error) {
     // Do something with response error
@@ -29,76 +39,19 @@ instance.interceptors.response.use(function (response) {
   });
 
 
-
-
-
-
-var data = {
-  "todos": [
-    {
-      "_id": "581ee7feacea2000100c4651",
-      "text": "Loading todo items...",
-      "_creator": "581ee75bacea2000100c464f",
-      "__v": 0,
-      "completedAt": null,
-      "completed": false
-    }
-  ]
-};
-
-Vue.component('todoitem', {
-  props: ['todo'],
-  template: "#todoitem-template",
-  data: function(){
-    return {
-      showdetail: false,
-      updating: false
-    }
-  },
-  methods: {
-    deletetodo: function(){
-      var text = this.todo.text
-      this.$emit('deletetodo', text)
-    },
-    toggle: function(){
-      var text = this.todo.text
-      this.$emit('toggle', text)
-    },
-    edit: function(){
-      // this.updating = !this.updating
-      this.$emit('edit')
-    },
-    confirmEdit: function(){
-
-    }
-  }
-});
-
-Vue.component('addtodo', {
-  template: "#addtodo-template",
-  data: function(){
-    return {
-      newtodotext: ''
-    }
-  },
-  methods: {
-    addnew: function(){
-      var newtodo = this.newtodotext;
-      console.log(newtodo);
-      this.newtodotext = '';
-      this.$emit('addnew', newtodo);
-    }
-  }
-})
-
-
 var app = new Vue({
-  el: '#app',
+  el: '#myapp',
+  components: {
+    'addtodo': addtodo,
+    'todoitem': todoitem,
+    'help': help
+  },
   data: {
-    todos: data.todos,
+    todos: [],
     query: 'all',
     addingnewtodo: false,
-    newtodo: ''
+    newtodo: '',
+    showLoading: false
   },
   computed: {
     queryTodos: function(){
@@ -138,7 +91,7 @@ var app = new Vue({
           // safely delete todo from app state now
           // Todo delete that item from app state
           // debugger
-          app.$root.todos = app.$root.todos.filter(function(elem, index){
+          app.todos = app.todos.filter(function(elem, index){
             return elem.text != text;
           })
         }
@@ -160,7 +113,7 @@ var app = new Vue({
         .then(function (response) {
           if(response.status == 200){
             // debugger
-            app.$root.todos.push(response.data)
+            app.todos.push(response.data)
           }
         })
         .catch(function (error) {
@@ -190,9 +143,9 @@ var app = new Vue({
         console.log('above is what you get by toggle the todo')
         if(response.status === 200){
           // safely toggle todo from app state now
-          for(var i = 0; i < app.$root.todos.length; i++){
-            if(app.$root.todos[i].text == text){
-              app.$root.todos[i].completed = !app.$root.todos[i].completed;
+          for(var i = 0; i < app.todos.length; i++){
+            if(app.todos[i].text == text){
+              app.todos[i].completed = !app.todos[i].completed;
             }
           }
         }
@@ -205,29 +158,15 @@ var app = new Vue({
       alert('This function will be avariable soon!')
     }
   },
-  mounted: function(){
+  beforeCreate: function(){
     instance.get('/todos')
       .then(function (response) {
         console.log(response.data);
-        app.$root.todos = response.data.todos;
+        app.todos = response.data.todos;
+        console.log(app.todos)
       })
       .catch(function (error) {
         console.log(error);
       });
   }
-})
-
-
-
-// This instance will use the Axios interceptor
-var help = new Vue({
-    el: '#help',
-    data: {
-      showLoading: false
-    },
-    components: {
-      'loading': {
-        template: '#loading-template',
-      }
-    }
 })

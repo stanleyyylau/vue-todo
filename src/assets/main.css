@@ -1,0 +1,35 @@
+.nav-bar-wrapper {
+    margin-top: 50px;
+}
+
+.nav-bar {
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    width: 100%;
+}
+
+.nav-bar a {
+    flex: 1;
+    background-color: #607D8B;
+    padding: 5px 0;
+    border: 1px solid #5e5757;
+    text-align: center;
+    color: white;
+}
+
+.add-new-container {
+    margin: 5px 0;
+}
+
+.confirm-add {
+    margin: 5px 0;
+}
+
+.detail-btns {
+    padding-top: 5px;
+}
+
+.detail-btns .btn {
+    margin-right: 5px;
+}

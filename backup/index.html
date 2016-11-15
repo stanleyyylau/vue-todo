@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Vue todo list</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" href="main.css">
+  <script src="vue.js"></script>
+  <style>
+
+    .loading-overlay {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: rgba(14, 13, 13, 0.46);
+  }
+
+  .sk-three-bounce {
+      position: absolute;
+      background-color: white;
+      color: red;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      left: 50%;
+      padding: 5px;
+      border-radius: 5px;
+  }
+
+  </style>
+</head>
+
+<body>
+<!-- Individual todo item template   -->
+<template id="todoitem-template">
+  <li class="list-group-item">
+    <template v-if="todo.completed">
+      <span @click="showdetail = !showdetail" style="color: #9E9E9E;text-decoration: line-through;">{{ todo.text }}</span>
+    </template>
+    <template v-else>
+      <span @click="showdetail = !showdetail">{{ todo.text }}</span>
+    </template>
+    <div class="detail-btns" v-show="showdetail">
+      <button type="button" class="btn btn-sm btn-success" @click="toggle">Toggle</button>
+      <button type="button" class="btn btn-sm btn-primary" @click="edit">Edit</button>
+      <button type="button" class="btn btn-sm btn-danger" @click="deletetodo">DELETE</button>
+    </div>
+    <template v-if="updating">
+      <form>
+        <div class="form-group">
+          <label for="updating">Enter your new todo name</label>
+          <input type="email" class="form-control" id="updating">
+          <button type="button" @click='confirmEdit' class="btn btn-primary confirm-add">confirm</button>
+        </div>
+      </form>
+    </template>
+  </li>
+</template>
+
+<!-- Add new todo item template, the popup -->
+<template id="addtodo-template">
+  <form>
+    <div class="form-group text-center">
+      <label for="newToDo">Enter new todo</label>
+      <input v-model="newtodotext" type="text" class="form-control" id="newToDo" placeholder="Enter your todo">
+      <button type="button" class="btn btn-primary confirm-add" @click="addnew">confirm</button>
+    </div>
+  </form>
+</template>
+
+<!-- Loading template so I can test Axios interceptor -->
+<template id="loading-template">
+  <div class="loading-overlay">
+    <div class="sk-three-bounce">
+      <div class="sk-child sk-bounce1">Loading furiously...</div>
+    </div>
+  </div>
+</template>
+
+
+<!-- The actual app -->
+<div id="app">
+  <!-- Container for todo items -->
+  <div class="container">
+    <div class="row text-center add-new-container">
+      <button type="button" class="btn btn-primary" @click="showaddnew">add new</button>
+    </div>
+    <addtodo v-show="addingnewtodo" @addnew="addnew"></addtodo>
+    <ul class="list-group">
+      <todoitem v-for="todo in queryTodos" v-bind:todo="todo" @edit="edit" @deletetodo="deletetodo" @toggle="toggle">
+      </todoitem>
+    </ul>
+  </div>
+
+  <!-- Nav bar, it will have router function in future -->
+  <div class="nav-bar-wrapper">
+    <div class="nav-bar">
+      <a @click="query='all'">All Todos</a>
+      <a @click="query='completed'">Completed</a>
+      <a @click="query='Notcompleted'">Not Completed</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Show loading for every Ajax request -->
+<div id="help">
+  <loading v-show="showLoading" ></loading>
+</div>
+
+
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="main.js"></script>
+</body>
+
+</html>
