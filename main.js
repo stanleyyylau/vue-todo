@@ -4,13 +4,32 @@
 // };
 
 // Vue.http.headers.common['x-auth'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODI5NGViMzVmMmQ3YTY2YmY1ZGZkNmIiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc5MTAyMTMxfQ.RAABJJ1pr509ME-GQ6YGEDlQF0XULEJzrnojJ_GyLQ8';
-
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M
 var instance = axios.create({
   baseURL: 'https://st-todo-api.herokuapp.com',
   headers: {
           'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ODFlZTc1YmFjZWEyMDAwMTAwYzQ2NGYiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNDc4NDIwMzE1fQ.mr2E8is4VUxQqk1pfhusgw80wUuLV92Kx-4D-_oUk5M'
             }
 });
+
+instance.interceptors.request.use(function (config) {
+  console.log('I intercept your request!!!!!!!!! right BEFORE you send it....');
+  help.showLoading = true;
+  return config;
+});
+
+instance.interceptors.response.use(function (response) {
+    console.log('I intercept the response!!!!')
+    help.showLoading = false;
+    return response;
+  }, function (error) {
+    // Do something with response error
+    console.log('I intercept the response!!!!')
+    return Promise.reject(error);
+  });
+
+
+
 
 
 
@@ -196,4 +215,19 @@ var app = new Vue({
         console.log(error);
       });
   }
+})
+
+
+
+// This instance will use the Axios interceptor
+var help = new Vue({
+    el: '#help',
+    data: {
+      showLoading: false
+    },
+    components: {
+      'loading': {
+        template: '#loading-template',
+      }
+    }
 })
